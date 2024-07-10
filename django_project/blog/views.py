@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Post
 from .forms import PostForm
 
@@ -13,8 +14,10 @@ def create_post(request):
         form = PostForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'The post has been created successfully.')
             return redirect('posts')
         else:
+            messages.error(request, 'Please correct the following errors:')
             return render(request, 'blog/post_form.html', {'form': form})
 
 def home(request):
