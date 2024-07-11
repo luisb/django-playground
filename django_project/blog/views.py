@@ -4,6 +4,19 @@ from .models import Post
 from .forms import PostForm
 
 # Create your views here.
+def delete_post(request, id):
+    post = get_object_or_404(Post, pk=id)
+    context = {
+        'post': post,
+    }
+
+    if request.method == 'GET':
+        return render(request, 'blog/post_confirm_delete.html', context)
+    elif request.method == 'POST':
+        post.delete()
+        messages.success(request, 'The post has been deleted successfully.')
+        return redirect('posts')
+
 def edit_post(request, id):
     post = get_object_or_404(Post, id=id)
 
