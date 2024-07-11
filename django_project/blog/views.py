@@ -7,7 +7,8 @@ from .forms import PostForm
 # Create your views here.
 @login_required
 def delete_post(request, id):
-    post = get_object_or_404(Post, pk=id)
+    queryset = Post.objects.filter(author=request.user)
+    post = get_object_or_404(queryset, pk=id)
     context = {
         'post': post,
     }
@@ -21,7 +22,8 @@ def delete_post(request, id):
 
 @login_required
 def edit_post(request, id):
-    post = get_object_or_404(Post, id=id)
+    queryset = Post.objects.filter(author=request.user)
+    post = get_object_or_404(queryset, pk=id)
 
     if request.method == 'GET':
         context = {
@@ -49,7 +51,9 @@ def create_post(request):
     elif request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.author = request.user
+            user.save()
             messages.success(request, 'The post has been created successfully.')
             return redirect('posts')
         else:
